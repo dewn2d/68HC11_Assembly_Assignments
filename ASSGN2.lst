@@ -1,0 +1,92 @@
+0001                         **************************************
+0002                         *
+0003                         * Name:	Dwayne Williams
+0004                         * ID:	16141671
+0005                         * Date:	9/25/17
+0006                         * Lab2
+0007                         *
+0008                         * Program description:
+0009                         *
+0010                         * Pseudocode:
+0011                         *
+0012                         * #define N 255
+0013                         * unsigned int result;
+0014                         * unsigned int inby;
+0015                         * unsigned int fval;
+0016                         * unsigned int c1;
+0017                         * 
+0018                         * result = 0;
+0019                         * inby = 1;
+0020                         * c1 = N;
+0021                         * fval = 2*c1-1;
+0022                         *
+0023                         * do{
+0024                         * result += inby;
+0025                         * inby+=2;
+0026                         * } until (inby >= fval)
+0027                         *
+0028                         **************************************
+0029                         
+0030                         * start of data section
+0031                         
+0032 b000                    	ORG 	$B000
+0033 b000 ff                 N      	FCB	255
+0034                         
+0035 b010                    	ORG 	$B010
+0036 b010                    RESULT	RMB     	2
+0037 b012                    INBY	RMB	2
+0038 b014                    FVAL	RMB	2
+0039 b016                    C1	RMB	2
+0040                         * define any other variables that you might need here
+0041                         
+0042 c000                    	ORG	$C000
+0043 c000 7f b0 14           	CLR	FVAL
+0044 c003 7f b0 15           	CLR	FVAL+1
+0045 c006 7f b0 16           	CLR	C1
+0046 c009 7f b0 17           	CLR	C1+1
+0047 c00c 7f b0 12           	CLR	INBY
+0048 c00f 7f b0 13           	CLR	INBY+1			
+0049 c012 7f b0 10           	CLR	RESULT
+0050 c015 7f b0 11           	CLR	RESULT+1
+0051                         
+0052 c018 7c b0 13           	INC	INBY+1		*initialize counter to  one
+0053                         
+0054 c01b f6 b0 17           	LDAB	C1+1
+0055 c01e fb b0 00           	ADDB	N		*copy the value in N and store it in C1
+0056 c021 f7 b0 17           	STAB	C1+1
+0057 c024 fc b0 14           	LDD	FVAL
+0058 c027 f3 b0 16           	ADDD	C1
+0059 c02a f3 b0 16           	ADDD	C1
+0060 c02d 83 00 01           	SUBD	#0001		*add c1 twice and subtract 1
+0061 c030 fd b0 14           	STD	FVAL
+0062                         	
+0063 c033 20 0b              	BRA	DO		*skip incbyh for first time
+0064                         	
+0065 c035 fc b0 12           INCBYH	LDD	INBY		*load counter for result incrementing
+0066 c038 c3 00 02           	ADDD	#0002		*add 2 to inby
+0067 c03b fd b0 12           	STD	INBY
+0068 c03e 20 0b              	BRA	UNTIL	
+0069                         	
+0070 c040 fc b0 10           DO	LDD	RESULT				
+0071 c043 f3 b0 12           	ADDD	INBY		*increment result by inby
+0072 c046 fd b0 10           	STD	RESULT		
+0073 c049 20 ea              	BRA	INCBYH		*always branch to inrement inby
+0074                         			
+0075 c04b fc b0 12           UNTIL	LDD	INBY		
+0076 c04e 1a b3 b0 14        	CMPD	FVAL			
+0077 c052 23 ec              	BLS	DO		*stop if inby reaches fval
+0078                         			
+0079 c054 20 fe              DONE 	BRA	DONE
+0080                         		
+0081                         * start of your program
+0082                         
+
+C1         b016
+DO         c040
+DONE       c054
+FVAL       b014
+INBY       b012
+INCBYH     c035
+N          b000
+RESULT     b010
+UNTIL      c04b

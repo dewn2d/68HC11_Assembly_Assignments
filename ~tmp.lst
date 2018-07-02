@@ -1,0 +1,273 @@
+0001                         ***************************************
+0002                         *
+0003                         * Name: 
+0004                         * ID:   
+0005                         * Date: 
+0006                         * Lab 4
+0007                         *
+0008                         * Program description:
+0009                         *
+0010                         *
+0011                         * Pseudocode of Main Program:
+0012                         *
+0013                         *---------------------------------------
+0014                         *
+0015                         * Pseudocode of Subroutine:
+0016                         *	
+0017                         *	
+0018                         ***************************************
+0019                         * start of data section
+0020 b000                    	ORG $B000
+0021 b000 01 02 05 64 96 c8  NARR	FCB	1, 2, 5, 100, 150, 200, 250, 254, $FF
+     fa fe ff
+0022 00ff                    SENTIN	EQU	$FF
+0023                         
+0024 b010                    	ORG $B010
+0025 b010                    RESARR	RMB	32
+0026 b030                    RESADDR	RMB	2
+0027 b032                    NARRADDR	RMB	2	
+0028 b034                    INDEX	RMB	1
+0029 b035                    INDEX1	RMB	1
+0030 b036                    INDEX2	RMB	1
+0031 b037                    REST	RMB 	2
+0032                         
+0033                         
+0034                         * define any variables that your MAIN program might need here
+0035                         * REMEMBER: Your subroutine must not access any of the main
+0036                         * program variables including NARR and RESARR.
+0037                         
+0038 c000                    	ORG $C000
+0039                         
+0040 c000 8e 01 ff           	LDS	#$01FF				*initialize stack pointer
+0041 c003 7f b0 34           	CLR	INDEX
+0042 c006 7f b0 35           	CLR	INDEX1
+0043 c009 7f b0 36           	CLR	INDEX2
+0044 c00c 7f b0 37           	CLR	REST
+0045                         	
+0046 c00f f6 b0 35           	LDAB 	INDEX1
+0047 c012 cb 01              	ADDB	#01
+0048 c014 f7 b0 35           	STAB	INDEX1
+0049                         
+0050 c017 f6 b0 34           	LDAB 	INDEX
+0051 c01a cb 02              	ADDB	#02
+0052 c01c f7 b0 34           	STAB	INDEX
+0053                         
+0054 c01f f6 b0 36           	LDAB 	INDEX2
+0055 c022 cb 06              	ADDB	#06
+0056 c024 f7 b0 36           	STAB	INDEX2
+0057                         
+0058 c027 cc b0 10           	LDD	#RESARR
+0059 c02a fd b0 30           	STD	RESADDR
+0060                         
+0061 c02d cc b0 00           	LDD	#NARR
+0062 c030 fd b0 32           	STD	NARRADDR	
+0063                         
+0064 c033 4f                 WHILE	CLRA	
+0065 c034 fe b0 32           	LDX	NARRADDR
+  line no.66: Warning --- Indexed Addressing Assumed
+0066 c037 e6 00              	LDAB	0, X
+0067 c039 c1 ff              	CMPB	#SENTIN	
+0068 c03b 27 3e              	BEQ	ENDWHILE
+0069                         
+0070 c03d bd d0 00           	JSR	SUB
+0071                         
+0072 c040 32                 	PULA
+0073 c041 33                 	PULB
+0074                         			
+0075 c042 fd b0 37           	STD	REST
+0076                         
+0077 c045 18 fe b0 30        	LDY	RESADDR
+0078 c049 fc b0 37           	LDD	REST
+0079 c04c 18 ed 00           	STD	0,Y
+0080                         
+0081 c04f 32                 	PULA	
+0082 c050 33                 	PULB
+0083                         			
+0084 c051 fd b0 37           	STD	REST
+0085                         
+0086 c054 fc b0 30           	LDD	RESADDR
+0087 c057 fb b0 34           	ADDB	INDEX
+0088 c05a fd b0 30           	STD	RESADDR
+0089                         
+0090 c05d 18 fe b0 30        	LDY	RESADDR
+0091 c061 fc b0 37           	LDD	REST
+0092 c064 18 ed 00           	STD	0,Y
+0093                         
+0094 c067 fc b0 30           	LDD	RESADDR
+0095 c06a fb b0 34           	ADDB	INDEX
+0096 c06d fd b0 30           	STD	RESADDR
+0097                         
+0098 c070 fc b0 32           	LDD	NARRADDR
+0099 c073 fb b0 35           	ADDB	INDEX1
+0100 c076 fd b0 32           	STD	NARRADDR
+0101                         
+0102 c079 20 b8              	BRA	WHILE
+0103                         
+0104                         ENDWHILE	
+0105 c07b 20 fe              DONE	BRA		DONE
+0106                         	
+0107                         * define any other variables that you might need here using RMB (not FCB or FDB)
+0108                         * remember that your main program must not access any of these variables, including
+0109                         
+0110                         
+0111 d000                    	ORG $D000
+0112                         * start of your subroutine 
+0113                         SUB	
+0114 d000 34                 	DES	*RESULT	16
+0115 d001 34                 	DES	*RESULT+1	17
+0116 d002 34                 	DES	*RESULT+2	18
+0117 d003 34                 	DES	*RESULT+3  	19
+0118                         
+0119 d004 36                 	PSHA	*15
+0120 d005 37                 	PSHB	*14
+0121 d006 3c                 	PSHX	*13 - 12	
+0122 d007 18 3c              	PSHY	*11 - 10
+0123                         
+0124 d009 34                 	DES	*C2+1	0
+0125 d00a 34                 	DES	*C2	1
+0126 d00b 34                 	DES	*C1+1	2
+0127 d00c 34                 	DES	*C1	3
+0128 d00d 34                 	DES	*TEMP+1	4
+0129 d00e 34                 	DES	*TEMP	5
+0130 d00f 34                 	DES	*INBY+1	6
+0131 d010 34                 	DES	*INBY	7
+0132 d011 34                 	DES	*SRESULT+1	8
+0133 d012 34                 	DES	*SRESULT	9
+0134                         
+0135 d013 30                 	TSX
+0136                         		
+  line no.137: Warning --- Indexed Addressing Assumed
+0137 d014 6f 10              	CLR	16, X
+  line no.138: Warning --- Indexed Addressing Assumed
+0138 d016 6f 11              	CLR	17, X
+0139                         	
+  line no.140: Warning --- Indexed Addressing Assumed
+0140 d018 6f 12              	CLR	18, X
+  line no.141: Warning --- Indexed Addressing Assumed
+0141 d01a 6f 13              	CLR	19, X
+  line no.142: Warning --- Indexed Addressing Assumed
+0142 d01c 6f 03              	CLR	3, X
+  line no.143: Warning --- Indexed Addressing Assumed
+0143 d01e 6f 02              	CLR	2, X
+  line no.144: Warning --- Indexed Addressing Assumed
+0144 d020 6f 00              	CLR	0, X
+0145                         		
+0146 d022 4c                 	INCA			*initialize c2 to 1
+  line no.147: Warning --- Indexed Addressing Assumed
+0147 d023 a7 01              	STAA	1, X
+0148 d025 4a                 	DECA
+0149                         
+0150 d026 1b                 	ABA			*copy the value in REG A and store it in C1
+  line no.151: Warning --- Indexed Addressing Assumed
+0151 d027 a7 03              	STAA	3, X
+0152                         
+0153                         				*start of do loop
+0154                         				*clear variables for squaring in while loop	
+  line no.155: Warning --- Indexed Addressing Assumed
+0155 d029 6f 09              DO	CLR	9, X
+  line no.156: Warning --- Indexed Addressing Assumed
+0156 d02b 6f 08              	CLR	8, X
+0157                         
+  line no.158: Warning --- Indexed Addressing Assumed
+0158 d02d 6f 05              	CLR	5, X
+  line no.159: Warning --- Indexed Addressing Assumed
+0159 d02f 6f 04              	CLR 	4, X
+0160                         				*reinitialize counter to  one
+  line no.161: Warning --- Indexed Addressing Assumed
+0161 d031 6f 07              	CLR	7, X
+  line no.162: Warning --- Indexed Addressing Assumed
+0162 d033 6f 06              	CLR	6, X
+0163                         	
+  line no.164: Warning --- Indexed Addressing Assumed
+0164 d035 6c 07              	INC	7, X
+0165                         		
+  line no.166: Warning --- Indexed Addressing Assumed
+0166 d037 ec 00              WHLE	LDD	0, X		*start of while loop
+  line no.167: Warning --- Indexed Addressing Assumed
+0167 d039 1a a3 04           	CMPD	4, X		*compare temp counter to current limit
+0168 d03c 27 11              	BEQ	ENDWHLE
+  line no.169: Warning --- Indexed Addressing Assumed
+0169 d03e ec 08              	LDD	8, X				
+  line no.170: Warning --- Indexed Addressing Assumed
+0170 d040 e3 06              	ADDD	6, X		*increment result by inby
+  line no.171: Warning --- Indexed Addressing Assumed
+0171 d042 ed 08              	STD	8, X
+  line no.172: Warning --- Indexed Addressing Assumed
+0172 d044 ec 06              	LDD	6, X		*load counter for result incrementing
+0173 d046 c3 00 02           	ADDD	#0002		*add 2 to inby
+  line no.174: Warning --- Indexed Addressing Assumed
+0174 d049 ed 06              	STD	6, X
+  line no.175: Warning --- Indexed Addressing Assumed
+0175 d04b 6c 05              	INC	5, X		
+0176 d04d 20 e8              	BRA	WHLE		*branch to start of while loop
+0177                         			
+  line no.178: Warning --- Indexed Addressing Assumed
+0178 d04f ec 12              ENDWHLE	LDD	18, X		*load result for squard value summation
+  line no.179: Warning --- Indexed Addressing Assumed
+0179 d051 e3 08              	ADDD	8, X		*add current squared value
+  line no.180: Warning --- Indexed Addressing Assumed
+0180 d053 ed 12              	STD	18, X
+  line no.181: Warning --- Indexed Addressing Assumed
+0181 d055 a6 11              	LDAA	17, X		
+0182 d057 89 00              	ADCA	#0000		*add carry bit to high 2 bytes
+  line no.183: Warning --- Indexed Addressing Assumed
+0183 d059 a7 11              	STAA	17, X 	
+0184                         	
+  line no.185: Warning --- Indexed Addressing Assumed
+0185 d05b e6 01              	LDAB	1, X		*update limit of while loop
+0186 d05d 5c                 	INCB			*increment counter of added squared values
+  line no.187: Warning --- Indexed Addressing Assumed
+0187 d05e e7 01              	STAB	1, X
+0188                         	
+  line no.189: Warning --- Indexed Addressing Assumed
+0189 d060 ec 00              UNTIL	LDD	0, X		
+  line no.190: Warning --- Indexed Addressing Assumed
+0190 d062 1a a3 02           	CMPD	2, X			
+0191 d065 23 c2              	BLS	DO		*end if current limit passes N
+0192                         	
+0193 d067 1a ee 10           	LDY	16,X
+0194                         
+0195 d06a ec 14              	LDD	20,X
+0196 d06c ed 10              	STD	16,X
+0197                         
+0198 d06e 1a ef 14           	STY	20,X
+0199                         
+0200 d071 31                 	INS
+0201 d072 31                 	INS
+0202 d073 31                 	INS
+0203 d074 31                 	INS
+0204 d075 31                 	INS
+0205 d076 31                 	INS
+0206 d077 31                 	INS
+0207 d078 31                 	INS
+0208 d079 31                 	INS
+0209 d07a 31                 	INS
+0210                         	
+0211 d07b 18 38              	PULY
+0212 d07d 38                 	PULX
+0213 d07e 33                 	PULB
+0214 d07f 32                 	PULA
+0215                         
+0216 d080 39                 	RTS
+0217                         
+0218                         
+
+DO         d029
+DONE       c07b
+ENDWHILE   c07b
+ENDWHLE    d04f
+INDEX      b034
+INDEX1     b035
+INDEX2     b036
+NARR       b000
+NARRADDR   b032
+RESADDR    b030
+RESARR     b010
+REST       b037
+SENTIN     00ff
+SUB        d000
+UNTIL      d060
+WHILE      c033
+WHLE       d037
+
+!!! 34 Warnings encountered; might not run correctly!!!

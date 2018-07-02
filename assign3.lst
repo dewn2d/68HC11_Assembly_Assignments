@@ -1,0 +1,138 @@
+0001                         **************************************
+0002                         *
+0003                         * Name: Dwayne Williams
+0004                         * ID:   16141671
+0005                         * Date: 10/10/2017
+0006                         * Lab3
+0007                         *
+0008                         * Program description:
+0009                         * assembly language program which generates
+0010                         * the sum of integer squared from 1 to N,  1 => N <= 254.
+0011                         *
+0012                         * Pseudocode:
+0013                         *
+0014                         * #define N 254
+0015                         * unsigned int result;
+0016                         * unsinged int sresult;
+0017                         * unsigned int inby;
+0018                         * unsigned int fval;
+0019                         * unsigned int c1;
+0020                         * unsigned int c2;
+0021                         * 
+0022                         * result = 0;
+0023                         * c1 = N;
+0024                         * c2 = 1;
+0025                         *
+0026                         * do{
+0027                         *
+0028                         * sresult = 0;
+0029                         * temp = 0;
+0030                         * inby = 1;
+0031                         *
+0032                         * while( c2 != temp  ){
+0033                         * 	sresult += inby;
+0034                         * 	inby +=2;
+0035                         *	temp++;
+0036                         * }
+0037                         *
+0038                         * result += sresult;
+0039                         * c2++;
+0040                         *
+0041                         * } until (c2 > c1)
+0042                         *
+0043                         *
+0044                         *
+0045                         *
+0046                         **************************************
+0047                         
+0048                         * start of data section
+0049                         
+0050 b000                    	ORG $B000
+0051 b000 fe                 N       	FCB    254
+0052                         
+0053 b010                    	ORG $B010
+0054 b010                    RESULT  	RMB 	4
+0055 b014                    SRESULT	RMB	2
+0056 b016                    INBY	RMB	2
+0057 b018                    TEMP	RMB	2
+0058 b01a                    C1	RMB	2
+0059 b01c                    C2	RMB	2
+0060                         * define any other variables that you might need here
+0061                         
+0062                         
+0063 c000                    	ORG $C000
+0064                         * start of your program
+0065 c000 7f b0 10           	CLR	RESULT
+0066 c003 7f b0 11           	CLR 	RESULT+1
+0067 c006 7f b0 12           	CLR 	RESULT+2
+0068 c009 7f b0 13           	CLR 	RESULT+3
+0069 c00c 7f b0 18           	CLR	TEMP
+0070 c00f 7f b0 19           	CLR	TEMP+1		
+0071 c012 7f b0 1a           	CLR	C1
+0072 c015 7f b0 1b           	CLR	C1+1
+0073 c018 7f b0 1c           	CLR	C2
+0074 c01b 7f b0 1d           	CLR	C2+1
+0075                         	
+0076 c01e f6 b0 1d           	LDAB	C2+1		*initialize c2 to 1
+0077 c021 5c                 	INCB			
+0078 c022 f7 b0 1d           	STAB	C2+1
+0079                         	
+0080 c025 f6 b0 1b           	LDAB	C1+1
+0081 c028 fb b0 00           	ADDB	N		*copy the value in N and store it in C1
+0082 c02b f7 b0 1b           	STAB	C1+1
+0083                         
+0084                         				*start of do loop
+0085                         				*clear variables for squaring in while loop	
+0086 c02e 7f b0 14           DO	CLR	SRESULT
+0087 c031 7f b0 15           	CLR	SRESULT+1
+0088                         	
+0089 c034 7f b0 18           	CLR	TEMP
+0090 c037 7f b0 19           	CLR 	TEMP+1
+0091                         	
+0092                         				*reinitialize counter to  one
+0093 c03a 7f b0 16           	CLR	INBY
+0094 c03d 7f b0 17           	CLR	INBY+1
+0095                         	
+0096 c040 7c b0 17           	INC	INBY+1
+0097                         		
+0098 c043 fc b0 1c           WHLE	LDD	C2		*start of while loop
+0099 c046 1a b3 b0 18        	CMPD	TEMP		*compare temp counter to current limit
+0100 c04a 27 17              	BEQ	ENDWHLE
+0101 c04c fc b0 14           	LDD	SRESULT				
+0102 c04f f3 b0 16           	ADDD	INBY		*increment result by inby
+0103 c052 fd b0 14           	STD	SRESULT
+0104 c055 fc b0 16           	LDD	INBY		*load counter for result incrementing
+0105 c058 c3 00 02           	ADDD	#0002		*add 2 to inby
+0106 c05b fd b0 16           	STD	INBY
+0107 c05e 7c b0 19           	INC	TEMP+1		
+0108 c061 20 e0              	BRA	WHLE		*branch to start of while loop
+0109                         			
+0110 c063 fc b0 12           ENDWHLE	LDD	RESULT+2		*load result for squard value summation
+0111 c066 f3 b0 14           	ADDD	SRESULT		*add current squared value
+0112 c069 fd b0 12           	STD	RESULT+2
+0113 c06c b6 b0 11           	LDAA	RESULT+1		
+0114 c06f 89 00              	ADCA	#0000		*add carry bit to high 2 bytes
+0115 c071 b7 b0 11           	STAA	RESULT+1 	
+0116                         	
+0117 c074 f6 b0 1d           	LDAB	C2+1		*update limit of while loop
+0118 c077 5c                 	INCB			*increment counter of added squared values
+0119 c078 f7 b0 1d           	STAB	C2+1
+0120                         	
+0121 c07b fc b0 1c           UNTIL	LDD	C2		
+0122 c07e 1a b3 b0 1a        	CMPD	C1			
+0123 c082 23 aa              	BLS	DO		*end if current limit passes N
+0124                         		
+0125 c084 20 fe              DONE	BRA		DONE
+
+C1         b01a
+C2         b01c
+DO         c02e
+DONE       c084
+ENDWHLE    c063
+INBY       b016
+N          b000
+RESULT     b010
+SRESULT    b014
+TEMP       b018
+UNTIL      c07b
+WHLE       c043
